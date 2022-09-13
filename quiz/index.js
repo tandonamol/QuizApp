@@ -7,7 +7,6 @@ import {
   StyleSheet,
   SafeAreaView,
   Alert,
-  FlatList,
 } from 'react-native';
 import axios from 'axios';
 import Question from './components/question';
@@ -51,28 +50,12 @@ const Quiz = () => {
     } else Alert.alert('Wrong Answer');
   };
 
-  const renderItem = ({item, index}) => {
-    return (
-      <View style={styles.optionView}>
-        <Text style={styles.optionText}>{index + 1 + '.'}</Text>
-        <Text style={{fontWeight: 'bold', fontSize: wp(5), marginLeft: wp(5)}}>
-          {item}
-        </Text>
-      </View>
-    );
-  };
-
   return (
     <>
       <Header q_No={questionCount} />
       <SafeAreaView style={styles.container}>
         <Question data={data?.question} />
-        {/* {data?.type == 'multiple' && (
-      <FlatList
-        data={data && data?.incorrect_answers}
-        renderItem={renderItem}
-      />
-    )} */}
+
         <TextInput
           style={styles.textInput}
           onChangeText={setUserAnswer}
