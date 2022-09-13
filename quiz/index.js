@@ -28,7 +28,6 @@ const Quiz = () => {
       .get('https://opentdb.com/api.php?amount=1')
       .then(function (response) {
         setData(response?.data?.results[0]);
-        console.log(response?.data?.results?.[0]);
         setCorrectAnswer(response?.data?.results?.[0]?.correct_answer);
       })
       .catch(function (error) {
