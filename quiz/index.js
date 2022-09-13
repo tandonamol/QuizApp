@@ -21,7 +21,6 @@ const Quiz = () => {
   const [userAnswer, setUserAnswer] = useState(null);
   const [data, setData] = useState(null);
   const [correctAnswer, setCorrectAnswer] = useState(null);
-  const [nextQuestion, setNextQuestion] = useState(false);
   const [questionCount, setQuestionCount] = useState(0);
   const [correctAnswerCount, setCorrectAnswerCount] = useState(0);
 
