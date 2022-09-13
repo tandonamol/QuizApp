@@ -71,7 +71,6 @@ const Quiz = () => {
           style={styles.button}>
           <Text
             style={{
-              // fontFamily: 'Cochin',
               fontWeight: 'bold',
               color: '#fff',
               fontSize: wp(4.5),
@@ -88,7 +87,6 @@ const Quiz = () => {
           style={styles.button}>
           <Text
             style={{
-              // fontFamily: 'Cochin',
               fontWeight: 'bold',
               color: '#fff',
               fontSize: wp(4.5),
