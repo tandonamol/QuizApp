@@ -22,12 +22,16 @@ const Quiz = () => {
   const [correctAnswer, setCorrectAnswer] = useState(null);
   const [questionCount, setQuestionCount] = useState(0);
   const [correctAnswerCount, setCorrectAnswerCount] = useState(0);
+  const [displayResponse, setDisplayResponse] = useState(null);
+  const [nextQuestion, setNextQuestion] = useState(false);
+  const [submitActive, setSubmitActive] = useState(true);
 
   const getQA = () => {
     axios
       .get('https://opentdb.com/api.php?amount=1')
       .then(function (response) {
         setData(response?.data?.results[0]);
+        console.log('Corect=>', response?.data?.results?.[0]?.correct_answer);
         setCorrectAnswer(response?.data?.results?.[0]?.correct_answer);
       })
       .catch(function (error) {
@@ -36,22 +40,35 @@ const Quiz = () => {
   };
   useEffect(() => {
     getQA();
-  }, [questionCount]);
+  }, [nextQuestion]);
 
   const handleSubmit = () => {
-    setUserAnswer('');
+    setSubmitActive(false);
     setQuestionCount(questionCount + 1);
     if (userAnswer.toLowerCase() == correctAnswer.toLowerCase()) {
       {
         setCorrectAnswerCount(correctAnswerCount + 1);
-        Alert.alert('Correct Answer!');
+        setDisplayResponse('Correct Answer');
       }
-    } else Alert.alert('Wrong Answer');
+    } else setDisplayResponse('Wrong Answer');
+  };
+
+  const handleNext = () => {
+    setNextQuestion(!nextQuestion);
+    setUserAnswer('');
+    setSubmitActive(true);
+    setDisplayResponse(null);
   };
 
   return (
     <>
-      <Header q_No={questionCount} />
+      <View style={styles.header}>
+        <Header q_No={questionCount} />
+        <Text style={{fontWeight: 'bold', fontSize: wp(6)}}>
+          Score:{correctAnswerCount}/{questionCount}
+        </Text>
+      </View>
+
       <SafeAreaView style={styles.container}>
         <Question data={data?.question} />
 
@@ -61,37 +78,32 @@ const Quiz = () => {
           placeholder="Type your answer here..."
           value={userAnswer}
         />
+        {displayResponse == 'Correct Answer' ? (
+          <Text style={[styles.responseLabel, {color: 'green'}]}>
+            {displayResponse}
+          </Text>
+        ) : displayResponse == 'Wrong Answer' ? (
+          <Text style={[styles.responseLabel, {color: 'red'}]}>
+            {displayResponse}
+          </Text>
+        ) : null}
         <TouchableOpacity
+          disabled={!submitActive}
           onPress={() => {
             if (userAnswer?.length == 0 || userAnswer == null)
               Alert.alert('Please enter your answer');
             else handleSubmit();
           }}
-          style={styles.button}>
-          <Text
-            style={{
-              fontWeight: 'bold',
-              color: '#fff',
-              fontSize: wp(4.5),
-            }}>
-            Submit
-          </Text>
+          style={[
+            styles.button,
+            {backgroundColor: submitActive ? '#2994FF' : 'grey'},
+          ]}>
+          <Text style={styles.buttonText}>Submit</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() =>
-            Alert.alert(
-              'Your score is ' + correctAnswerCount + '/' + questionCount,
-            )
-          }
-          style={styles.button}>
-          <Text
-            style={{
-              fontWeight: 'bold',
-              color: '#fff',
-              fontSize: wp(4.5),
-            }}>
-            My Score
-          </Text>
+          onPress={() => handleNext()}
+          style={[styles.button, {backgroundColor: 'maroon'}]}>
+          <Text style={styles.buttonText}>Next</Text>
         </TouchableOpacity>
       </SafeAreaView>
     </>
@@ -104,6 +116,12 @@ const styles = StyleSheet.create({
     marginHorizontal: wp(4),
     marginTop: hp(10),
   },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    marginHorizontal: wp(2),
+  },
   textInput: {
     height: hp(5),
     borderWidth: 1,
@@ -112,29 +130,26 @@ const styles = StyleSheet.create({
     borderColor: '#707070',
     alignSelf: 'center',
     marginTop: hp(3),
+    borderRadius: 5,
   },
   button: {
-    width: wp(50),
+    width: wp(95),
     height: hp(5),
-    backgroundColor: '#2994FF',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 5,
     marginTop: hp(2),
     alignSelf: 'center',
   },
-  optionView: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: wp(90),
-    justifyContent: 'flex-start',
-    marginTop: hp(1),
-    height: hp(5),
-  },
-  optionText: {
+  buttonText: {
     fontWeight: 'bold',
-    fontSize: wp(4),
-    textAlign: 'center',
+    color: '#fff',
+    fontSize: wp(4.5),
+  },
+  responseLabel: {
+    fontWeight: 'bold',
+    fontSize: wp(5),
+    marginTop: hp(1),
   },
 });
 
