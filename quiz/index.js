@@ -31,7 +31,6 @@ const Quiz = () => {
       .get('https://opentdb.com/api.php?amount=1')
       .then(function (response) {
         setData(response?.data?.results[0]);
-        console.log('Corect=>', response?.data?.results?.[0]?.correct_answer);
         setCorrectAnswer(response?.data?.results?.[0]?.correct_answer);
       })
       .catch(function (error) {
