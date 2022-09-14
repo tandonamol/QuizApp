@@ -24,7 +24,7 @@ const Quiz = () => {
   const [correctAnswerCount, setCorrectAnswerCount] = useState(0);
   const [displayResponse, setDisplayResponse] = useState(null);
   const [nextQuestion, setNextQuestion] = useState(false);
-  const [submitActive, setSubmitActive] = useState(true);
+  const [showSubmit, setShowSubmit] = useState(true);
 
   const getQA = () => {
     axios
@@ -32,6 +32,7 @@ const Quiz = () => {
       .then(function (response) {
         setData(response?.data?.results[0]);
         setCorrectAnswer(response?.data?.results?.[0]?.correct_answer);
+        console.log(response?.data?.results?.[0]?.correct_answer);
       })
       .catch(function (error) {
         console.log(error);
@@ -42,8 +43,8 @@ const Quiz = () => {
   }, [nextQuestion]);
 
   const handleSubmit = () => {
-    setSubmitActive(false);
-    setQuestionCount(questionCount + 1);
+    setShowSubmit(false);
+
     if (userAnswer.toLowerCase() == correctAnswer.toLowerCase()) {
       {
         setCorrectAnswerCount(correctAnswerCount + 1);
@@ -55,7 +56,8 @@ const Quiz = () => {
   const handleNext = () => {
     setNextQuestion(!nextQuestion);
     setUserAnswer('');
-    setSubmitActive(true);
+    setQuestionCount(questionCount + 1);
+    setShowSubmit(true);
     setDisplayResponse(null);
   };
 
@@ -82,28 +84,34 @@ const Quiz = () => {
             {displayResponse}
           </Text>
         ) : displayResponse == 'Wrong Answer' ? (
-          <Text style={[styles.responseLabel, {color: 'red'}]}>
-            {displayResponse}
-          </Text>
+          <View>
+            <Text style={[styles.responseLabel, {color: 'red'}]}>
+              {displayResponse}
+            </Text>
+            <Text style={[styles.responseLabel, {color: 'green'}]}>
+              Correct Answer is {correctAnswer}
+            </Text>
+          </View>
         ) : null}
-        <TouchableOpacity
-          disabled={!submitActive}
-          onPress={() => {
-            if (userAnswer?.length == 0 || userAnswer == null)
-              Alert.alert('Please enter your answer');
-            else handleSubmit();
-          }}
-          style={[
-            styles.button,
-            {backgroundColor: submitActive ? '#2994FF' : 'grey'},
-          ]}>
-          <Text style={styles.buttonText}>Submit</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => handleNext()}
-          style={[styles.button, {backgroundColor: 'maroon'}]}>
-          <Text style={styles.buttonText}>Next</Text>
-        </TouchableOpacity>
+        {showSubmit && (
+          <TouchableOpacity
+            onPress={() => {
+              if (userAnswer?.length == 0 || userAnswer == null)
+                Alert.alert('Please enter your answer');
+              else handleSubmit();
+            }}
+            style={[styles.button, {backgroundColor: '#2994FF'}]}>
+            <Text style={styles.buttonText}>Submit</Text>
+          </TouchableOpacity>
+        )}
+
+        {showSubmit == false && (
+          <TouchableOpacity
+            onPress={() => handleNext()}
+            style={[styles.button, {backgroundColor: 'maroon'}]}>
+            <Text style={styles.buttonText}>Next</Text>
+          </TouchableOpacity>
+        )}
       </SafeAreaView>
     </>
   );
